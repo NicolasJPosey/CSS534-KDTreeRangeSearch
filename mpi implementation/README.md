@@ -29,9 +29,7 @@ Execute the following command to compile the Java source files and generate an e
 
 This script compiles KDTree.java and Tuple2D.java, resulting in an executable JAR file named KDTree.jar.
 
-## This script compiles KDTree.java and Tuple2D.java, resulting in an executable JAR file named KDTree.jar.
-
-Execution Guidelines
+## Execution Guidelines
 Utilize the runmpi_kdtree.sh script for executing the KD-Tree MPI program. This script iterates over a set of data files and executes the program with a varying number of MPI processes.
 
 Command format:
