@@ -1,0 +1,84 @@
+<!-- You may place comments in this type of file format. Use standard XML comment scheme. -->
+
+<!--
+	This document MUST be formatted using standard XML formatting rules. If not, this document
+	will not parse correctly and will cause the library to throw an Exception on startup.
+	
+	There is only one part of this that is order dependent - the order in which the nodes are
+	specified determines their rank. Nodes listed earlier have lower ranks than those listed
+	later.
+	
+-->	
+
+<nodes>
+
+	<node>
+	
+		<master>true</master>
+		
+		<!-- Hostname is required, and may either be an FQDN or IP address -->
+		<!-- Make sure the name/address specified is reachable by all other nodes -->
+		<hostname>cssmpi13h.uwb.edu</hostname>
+		
+		<!-- Masshome is where MASS.jar and any other dependencies of your application reside -->
+		<masshome>/home/NETID/roominy/prog5/kdtreeMASS/KDTreeMASS</masshome>
+
+	</node>
+
+	<!-- Connection to CSSMPI2 -->
+	<!--
+	<node>
+		<hostname>cssmpi2h.uwb.edu</hostname>
+		<masshome>/home/NETID/yuanma/mass_quickstart/Quickstart/</masshome>
+		<username>yuanma</username>
+		<privatekey>~/.ssh/id_rsa</privatekey>
+	</node>
+	-->
+    <!-- Connection to CSSMPI14 -->
+    <!---->
+    <!-- <node>
+        <hostname>cssmpi14h.uwb.edu</hostname>
+        <masshome>/home/NETID/roominy/prog5/kdtreeMASS/KDTreeMASS</masshome>
+        <username>roominy</username>
+        <privatekey>~/.ssh/id_rsa</privatekey>
+    </node> -->
+    
+    <!-- Connection to CSSMPI15 -->
+    <!--
+    <node>
+        <hostname>cssmpi15h.uwb.edu</hostname>
+        <masshome>/home/NETID/roominy/mass_quickstart/Quickstart/</masshome>
+        <username>roominy</username>
+        <privatekey>~/.ssh/id_rsa</privatekey>
+    </node>
+    -->
+    <!-- Connection to CSSMPI16 -->
+    <!--
+    <node>
+        <hostname>cssmpi16h.uwb.edu</hostname>
+        <masshome>/home/NETID/roominy/mass_quickstart/Quickstart/</masshome>
+        <username>roominy</username>
+        <privatekey>~/.ssh/id_rsa</privatekey>
+    </node>
+    -->
+    <!-- Connection to CSSMPI17 -->
+    <!--
+    <node>
+        <hostname>cssmpi17h.uwb.edu</hostname>
+        <masshome>/home/NETID/roominy/mass_quickstart/Quickstart/</masshome>
+        <username>roominy</username>
+        <privatekey>~/.ssh/id_rsa</privatekey>
+    </node>
+    -->
+    <!-- Connection to CSSMPI18 -->
+    <!--
+    <node>
+        <hostname>cssmpi18h.uwb.edu</hostname>
+        <masshome>/home/NETID/roominy/mass_quickstart/Quickstart/</masshome>
+        <username>roominy</username>
+        <privatekey>~/.ssh/id_rsa</privatekey>
+    </node>
+    -->
+    
+
+</nodes>
