@@ -1,32 +1,24 @@
 package edu.uwb.css534;
 
+import java.io.Serializable;
+
 import edu.uw.bothell.css.dsl.MASS.VertexPlace;
 
-class KDNode  extends VertexPlace {
+public class KDNode  extends VertexPlace  implements Serializable {
     // label for node
-    private int nodeId;
+    int nodeId;
     // store point as a Tuple2D
-    private Tuple2D location; 
+    Tuple2D location; 
 
 
-    /**
-     * constructor for KDNode
-     */
-    public KDNode() {
-        super();
-    }
-    
+    // /**
+    //  * constructor for KDNode
+    //  */
+    // public KDNode() {
+    //     super();
+    // }
+
      /**
-     * constructor for KDNode
-     * @param location The 2D point that this node will represent
-     */
-    public KDNode(Tuple2D location) {
-        super();
-        this.nodeId = 0;
-        this.location = location;
-    }
-
-    /**
      * constructor for KDNode
      * @param location The 2D point that this node will represent
      */
@@ -35,13 +27,24 @@ class KDNode  extends VertexPlace {
         this.nodeId = 0;
         this.location = (Tuple2D) arg;
     }
+    
+    //  /**
+    //  * constructor for KDNode
+    //  * @param location The 2D point that this node will represent
+    //  */
+    // public KDNode(Tuple2D location) {
+    //     super();
+    //     this.nodeId = 0;
+    //     this.location = location;
+    // }
+
 
     /**
      * constructor for KDNode
      * @param nodeInfo Information about the node such as it's ID and location that the node will represent
      */
     public KDNode( int nodeId , Tuple2D location) {
-        super();
+        // super();
         this.nodeId = nodeId;
         this.location = location;
     }

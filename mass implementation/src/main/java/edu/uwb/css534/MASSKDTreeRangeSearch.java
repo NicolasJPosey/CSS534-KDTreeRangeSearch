@@ -91,8 +91,9 @@ public class MASSKDTreeRangeSearch {
 		MASS.init( );
 		int gpHandle = 0;
 		//Not sure if this is the class name that we actually need to pass into GraphPlaces
-		String placeClassName = Tuple2D.class.getName();
+		String placeClassName = KDNode.class.getName();
 		graph = new GraphPlaces(gpHandle, placeClassName);
+		MASS.setCurrentPlacesBase(graph);
 
 		
 		
@@ -128,8 +129,8 @@ public class MASSKDTreeRangeSearch {
 		MASS.getLogger().debug("graph.getVertex("+rootId+"): "+graph.getVertex(rootId).neighbors+" - "+graph.getVertex(rootId).neighbors.size());
 		 
 		MASS.getLogger().debug("graph.getVertex(rootId): "+graph.getVertex(rootId).left+" - "+ graph.getVertex(rootId).right );
-		Tuple2D v = (Tuple2D) graph.getVertex(rootId);
-		MASS.getLogger().debug( " v " + " id:(x,y) =  " + v.getId()+":("+v.getX() +","+v.getY() +")");
+		KDNode n = (KDNode) graph.getVertex(rootId);
+		MASS.getLogger().debug( " v " + " id:(x,y) =  " + n.location.getId()+":("+n.location.getX() +","+n.location.getY() +")");
 		// NodeArgs nodeArgs = new NodeArgs(rootId, queryRange, 0);
 		Object[] arg = new Object[2];
         arg[0] = range; //Range
@@ -141,21 +142,24 @@ public class MASSKDTreeRangeSearch {
 		
 		// Agents searchers = new Agents(2, agentClassName, nodeArgs, graph, 1);
 
-		// searchers.callAll(SearchAgent.INIT_ON_ROOT,rootId);
-		// searchers.manageAll();
+		searchers.callAll(SearchAgent.INIT_ON_ROOT,rootId);
+		searchers.manageAll();
 
 		int nAgents = searchers.nAgents();
-		List<List<Tuple2D>> results =  new ArrayList<>();
+		// List<List<Tuple2D>> results =  new ArrayList<>();
+		List<Tuple2D> results =  new ArrayList<>();
 		
 		while(nAgents != 0){
 			MASS.getLogger().debug( "in while" );
 
 			Object[] tempResults = (Object[]) searchers.callAll(SearchAgent.TREE_SEARCH,new Object[nAgents]);
 			searchers.manageAll();
+			MASS.getLogger().debug( "Quickstart "+tempResults +" - "+tempResults.length );
+
 
 			for( int agent = 0 ; agent < tempResults.length ; agent++ ){
 				if(tempResults[agent] != null){
-					results.add(Arrays.asList(((Tuple2D[]) tempResults[agent])) );
+					results.add((Tuple2D) tempResults[agent]);
 				}
 			}
 			nAgents = searchers.nAgents();
@@ -168,11 +172,11 @@ public class MASSKDTreeRangeSearch {
 		MASS.getLogger().debug( "MASS library has stopped" );
 		
 
-		for(List<Tuple2D> list: results){
-			for(Tuple2D point :list){
+		// for(List<Tuple2D> list: results){
+			for(Tuple2D point :results){
 				System.out.println(point.toString());
 			}
-		}
+		// }
 
 		System.out.println( "Execution time = " + execTime + " milliseconds" );
 		
@@ -185,18 +189,21 @@ public class MASSKDTreeRangeSearch {
 		if (points.isEmpty()) return parentId;
 		if (points.size() == 1) {
 			Tuple2D singlePoint = points.get(0);
-			int nodeId = graph.addVertex(singlePoint.getId(), singlePoint);
+			// int nodeId = graph.addVertex(singlePoint.getId(), singlePoint);
+			int nodeId = graph.addVertexWithParams(singlePoint);
 			return nodeId;
 		}
 	
 		// Sort the points based on the current dimension
+		// Comparator<Tuple2D> comparator = (dimension == 0) ?  Comparator.comparingInt(t -> t.point[0]):  Comparator.comparingInt(t -> t.point[1]);
 		Comparator<Tuple2D> comparator = (dimension == 0) ? Comparator.comparing(Tuple2D::getX) : Comparator.comparing(Tuple2D::getY);
 		points.sort(comparator);
 	
 		// finding median
 		int medianIndex = points.size() / 2;
 		Tuple2D medianPoint = points.get(medianIndex);
-		int nodeId = graph.addVertex(medianPoint.getId(), medianPoint);
+		// int nodeId = graph.addVertex(medianPoint.getId(), medianPoint);
+		int nodeId = graph.addVertexWithParams(medianPoint);
 		
 	
 		// split the list for left and right subtrees
@@ -212,17 +219,17 @@ public class MASSKDTreeRangeSearch {
 	
 		// add edges to the graph
 		if(nodeId != leftChildId){ 
-			medianPoint.left = leftChildId;
+			// medianPoint.left = leftChildId;
 			graph.getVertex(nodeId).left = leftChildId;
-			MASS.getLogger().debug("medianPoint.left= " +medianPoint.left );
+			// MASS.getLogger().debug("medianPoint.left= " +medianPoint.left );
 			MASS.getLogger().debug("graph.getVertex(nodeId).left = " + graph.getVertex(nodeId).left );
 			graph.addEdge(nodeId, leftChildId, 0);
 		}
 
 		if(nodeId != rightChildId) {
 			graph.getVertex(nodeId).right = rightChildId;
-			medianPoint.right = rightChildId;
-			MASS.getLogger().debug("medianPoint.right= " +medianPoint.right );
+			// medianPoint.right = rightChildId;
+			// MASS.getLogger().debug("medianPoint.right= " +medianPoint.right );
 			MASS.getLogger().debug("graph.getVertex(nodeId).right = " + graph.getVertex(nodeId).right );
 			graph.addEdge(nodeId, rightChildId, 0);
 		}

@@ -49,6 +49,7 @@ public class SearchAgent extends GraphAgent {
      public SearchAgent(Object args) {
         SmartArgs2Agents attr = (SmartArgs2Agents) args;
         range =  attr.searchRange;
+        //queryRange = new Range(new Tuple2D(Integer.parseInt(xRange[0]), Integer.parseInt(yRange[0])), new Tuple2D(Integer.parseInt(xRange[1]), Integer.parseInt(yRange[1])));
         searchRange = new Range(new Tuple2D(range[0], range[2]), new Tuple2D(range[1], range[3]));
         MASS.getLogger().debug("***** agent(" + getAgentId() + ") was created. ") ;
 
@@ -136,13 +137,13 @@ public class SearchAgent extends GraphAgent {
 
     public Object searchTree() {
 
-        Tuple2D point = (Tuple2D) getPlace();
+        KDNode node = (KDNode) getPlace();
 
         int axis = level % k;
         // determine the relevant areas to search based on the current node's position and the axis of comparison
-        Tuple2D leftTop = (axis == 0) ? new Tuple2D(point.getX(), searchRange.getUpperRight().getY()) : new Tuple2D(searchRange.getUpperRight().getX(), point.getY());
-        Tuple2D rightBottom = (axis == 0) ? new Tuple2D(point.getX(), searchRange.getLowerLeft().getY()) : new Tuple2D(searchRange.getLowerLeft().getX(), point.getY());
-        MASS.getLogger().debug( " point : " + point.toString());
+        Tuple2D leftTop = (axis == 0) ? new Tuple2D(node.location.getX(), searchRange.getUpperRight().getY()) : new Tuple2D(searchRange.getUpperRight().getX(), node.location.getY());
+        Tuple2D rightBottom = (axis == 0) ? new Tuple2D(node.location.getX(), searchRange.getLowerLeft().getY()) : new Tuple2D(searchRange.getLowerLeft().getX(), node.location.getY());
+        MASS.getLogger().debug( " point : " + node.location.toString());
 
         level ++;
         // create two ranges representing left and right children subspaces for further searching
@@ -152,6 +153,7 @@ public class SearchAgent extends GraphAgent {
 
         // search the left child if the left range intersects with the query
         propagateTree(BothBranch_, range);
+        // level ++;
         // if (leftRange.intersects(searchRange) && rightRange.intersects(searchRange)) {
         //     // result.addAll(rangeQuery(searchRange, node.getLeftChild(), level));
 
@@ -171,10 +173,10 @@ public class SearchAgent extends GraphAgent {
         //     }
         // }
 
-        if (!(getPlace().getVisited()) && searchRange.contains(point)) {
+        if (!(getPlace().getVisited()) && searchRange.contains(node.location)) {
             getPlace().setVisited(true);
-            MASS.getLogger().debug( " point : " + point.toString());
-            return point;
+            MASS.getLogger().debug( "found point : " + node.location.toString());
+            return node.location;
         }
         return null;
     }
