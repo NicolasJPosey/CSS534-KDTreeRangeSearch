@@ -47,6 +47,7 @@ public class SearchAgent extends GraphAgent {
     // }
 
      public SearchAgent(Object args) {
+        super(args);
         SmartArgs2Agents attr = (SmartArgs2Agents) args;
         range =  attr.searchRange;
         //queryRange = new Range(new Tuple2D(Integer.parseInt(xRange[0]), Integer.parseInt(yRange[0])), new Tuple2D(Integer.parseInt(xRange[1]), Integer.parseInt(yRange[1])));
@@ -145,39 +146,33 @@ public class SearchAgent extends GraphAgent {
         Tuple2D rightBottom = (axis == 0) ? new Tuple2D(node.location.getX(), searchRange.getLowerLeft().getY()) : new Tuple2D(searchRange.getLowerLeft().getX(), node.location.getY());
         MASS.getLogger().debug( " point : " + node.location.toString());
 
-        level ++;
+        // level ++;
         // create two ranges representing left and right children subspaces for further searching
         Range leftRange = new Range(searchRange.getLowerLeft() , leftTop);
         Range rightRange = new Range(rightBottom, searchRange.getUpperRight());
 
-
-        // search the left child if the left range intersects with the query
-        propagateTree(BothBranch_, range);
         // level ++;
-        // if (leftRange.intersects(searchRange) && rightRange.intersects(searchRange)) {
-        //     // result.addAll(rangeQuery(searchRange, node.getLeftChild(), level));
-
-        //     // BothBranch_
-        //     propagateTree(BothBranch_, range);
-        // }else{
-        // // search the right child if the left range intersects with the query
-        //     if (rightRange.intersects(searchRange)) {
-        //     // result.addAll(rangeQuery(searchRange, node.getRightChild(), level));
-        //     // RightBranch_ 
-        //     propagateTree(RightBranch_,range);
-        //     }
-        //     if (leftRange.intersects(searchRange)) {
-        //     // result.addAll(rangeQuery(searchRange, node.getRightChild(), level));
-        //     // LeftBranch_
-        //     propagateTree(LeftBranch_, range);
-        //     }
-        // }
+        if (leftRange.intersects(searchRange) && rightRange.intersects(searchRange)) {
+            // BothBranch_
+            propagateTree(BothBranch_, range);
+        }else{
+        // search the right child if the left range intersects with the query
+            if (rightRange.intersects(searchRange)) {
+            // RightBranch_ 
+            propagateTree(RightBranch_,range);
+            }
+            if (leftRange.intersects(searchRange)) {
+            // LeftBranch_
+            propagateTree(LeftBranch_, range);
+            }
+        }
 
         if (!(getPlace().getVisited()) && searchRange.contains(node.location)) {
             getPlace().setVisited(true);
             MASS.getLogger().debug( "found point : " + node.location.toString());
             return node.location;
         }
+        
         return null;
     }
        
