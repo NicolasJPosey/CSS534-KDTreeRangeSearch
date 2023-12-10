@@ -4,44 +4,33 @@ import java.io.Serializable;
 
 import edu.uw.bothell.css.dsl.MASS.VertexPlace;
 
+
+// KDNode class extends VertexPlace and implements Serializable interface
+// This class is used to represent a node in a KD-Tree
 public class KDNode  extends VertexPlace  implements Serializable {
-    // label for node
+    // id for node
     int nodeId;
     // store point as a Tuple2D
     Tuple2D location; 
 
 
-    // /**
-    //  * constructor for KDNode
-    //  */
-    // public KDNode() {
-    //     super();
-    // }
-
-     /**
-     * constructor for KDNode
-     * @param location The 2D point that this node will represent
+    /**
+     * constructor for KDNode with a single argument
+     * initializes a KDNode with a given location
+     * @param arg the 2D point (Tuple2D) that this node will represent
      */
     public KDNode(Object arg) {
         super();
         this.nodeId = 0;
         this.location = (Tuple2D) arg;
     }
-    
-    //  /**
-    //  * constructor for KDNode
-    //  * @param location The 2D point that this node will represent
-    //  */
-    // public KDNode(Tuple2D location) {
-    //     super();
-    //     this.nodeId = 0;
-    //     this.location = location;
-    // }
 
 
     /**
-     * constructor for KDNode
-     * @param nodeInfo Information about the node such as it's ID and location that the node will represent
+     * constructor for KDNode with nodeId and location
+     * initializes a KDNode with specified nodeId and location
+     * @param nodeId the unique identifier for the node
+     * @param location the 2D point (Tuple2D) that the node will represent
      */
     public KDNode( int nodeId , Tuple2D location) {
         // super();
@@ -66,7 +55,7 @@ public class KDNode  extends VertexPlace  implements Serializable {
     }
      
     /**
-     * retrieves the vertexId of this node
+     * retrieves the nodeId of this node
      * @return the vertex id for the node
      */
     public int getNodeId() {
@@ -75,12 +64,13 @@ public class KDNode  extends VertexPlace  implements Serializable {
 
     /**
      * sets the vertexId of this node
-     * @param vertexId the new vertexId for this node
+     * @param nodeId the new nodeId for this node
      */
     public void setNodeId(int nodeId) {
         this.nodeId = nodeId;
     }
 
+    // overriding hashCode method for consistent hashing based on nodeId and location
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -89,7 +79,8 @@ public class KDNode  extends VertexPlace  implements Serializable {
         result = prime * result + ((location == null) ? 0 : location.hashCode());
         return result;
     }
-
+    
+    // overriding equals method to compare KDNode objects based on nodeId and location
     @Override
     public boolean equals(Object obj) {
         if (this == obj)

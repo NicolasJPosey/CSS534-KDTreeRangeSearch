@@ -1,69 +1,57 @@
 package edu.uwb.css534;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import edu.uw.bothell.css.dsl.MASS.GraphAgent;
-// import edu.uw.bothell.css.dsl.MASS.Agent;
+
 import edu.uw.bothell.css.dsl.MASS.MASS;
 
-// import edu.uw.bothell.css.dsl.MASS.SmartAgent;
 import edu.uw.bothell.css.dsl.MASS.SmartArgs2Agents;
 
+// SearchAgent extends GraphAgent and is responsible for searching within a KDTree
 public class SearchAgent extends GraphAgent {
 
+    // constants for identifying methods in callMethod
     public static final int INIT_ON_ROOT = 0;
     public static final int TREE_SEARCH = 1;
 
-    Range searchRange;
-    int[] range ;
+    // Range object to hold the search range
+    Range searchRange; 
+     // array to hold range values
+    int[] range; 
 
+    // dimensionality of the space, here it is 2 for 2D
     int k = 2;
-   
-    
 
     /**
-     * This constructor will be called upon instantiation by MASS
+     * default constructor called by MASS framework during instantiation
      */
     public SearchAgent() {
         super();
-
     }
 
     /**
-     * This constructor will be called upon instantiation by MASS
-    //  */
-    // public SearchAgent(Object args) {
-    //     NodeArgs nodeArgs = (NodeArgs) args;
-    //     searchRange = nodeArgs.getSearchRange();
-    //     neighborIds = nodeArgs.getNeighborIds();
-    //     dimension = nodeArgs.getDimension();
-    //     foundPoints = new ArrayList<>();
-
-    //     MASS.getLogger().debug("***** agent(" + getAgentId() + ") was created. " + nodeArgs.toString());
-
-
-
-    // }
-
-     public SearchAgent(Object args) {
+     * constructor with arguments for initializing the search range
+     * @param args arguments received from the MASS framework
+     */
+    public SearchAgent(Object args) {
         super(args);
         SmartArgs2Agents attr = (SmartArgs2Agents) args;
-        range =  attr.searchRange;
-        //queryRange = new Range(new Tuple2D(Integer.parseInt(xRange[0]), Integer.parseInt(yRange[0])), new Tuple2D(Integer.parseInt(xRange[1]), Integer.parseInt(yRange[1])));
+        range = attr.searchRange;
         searchRange = new Range(new Tuple2D(range[0], range[2]), new Tuple2D(range[1], range[3]));
-        MASS.getLogger().debug("***** agent(" + getAgentId() + ") was created. ") ;
-
+        MASS.getLogger().debug("***** agent(" + getAgentId() + ") was created. ");
     }
 
     /**
-     * This method is called when "callAll" is invoked from the master node
+     * method called when "callAll" is invoked from the master node
+     * It executes different functions based on the method identifier
+     * @param method rhe method identifier
+     * @param o additional object parameter
+     * @return eesult of the invoked method
      */
     public Object callMethod(int method, Object o) {
-        switch (method) {
-            case INIT_ON_ROOT:
+        switch (method) { 
+            case INIT_ON_ROOT: // moves this agent to the root node of KDTree
                 return initOnRoot(o);
-            case TREE_SEARCH:
+            case TREE_SEARCH: // conducts a search within the KDTree
                 return searchTree();
             default:
                 return new String("Unknown Method Number: " + method);
@@ -72,109 +60,67 @@ public class SearchAgent extends GraphAgent {
 
     }
 
-    /**
-     * Move this Agent to root node of KDTree
-     * 
-     * @param rootId
-     * @return True if migration is successfull
+   /**
+     * moves this agent to the root node of KDTree
+     * @param root The root node identifier
+     * @return True if migration is successful
      */
     public boolean initOnRoot(Object root) {
-        
+
         int rootId = (int) root;
-        MASS.getLogger().error("***** agent(" + getAgentId() + ") migrate to: "+rootId );
-        
-       
-        //  MASS.getLogger().debug("***** agent(" + getAgentId() + ") migrate to: "+ rootArgs.getRootId() + " MASS.distributed_map " + MASS.distributed_map.get(rootArgs.getRootId()) + ".");
+        MASS.getLogger().error("***** agent(" + getAgentId() + ") migrate to: " + rootId);
         return migrate(rootId);
     }
-
-    // public Object searchTree() {
-
-    //     Tuple2D point = (Tuple2D) getPlace();
-    //     // chech if the point is with in the search range and not yet added
-    //     if (!(getPlace().getVisited()) && searchRange.contains(point)) {
-            
-    //         getPlace().setVisited(true);
-    //         return point;
-    //     }
-    //     // get place neighbors 
-    //     Object[] neighbors = ((KDNode) getPlace()).getNeighbors();
-    //     // if leaf: kill agent and returen results
-    //     if (neighbors.length == 0) {
-    //         kill();
-    //         MASS.getLogger().debug("***** agent(" + getAgentId() + ") was killed.");
-    //         return (Object[]) (foundPoints.toArray(new Tuple2D[0]));
-    //     }
-    //     // chech if agent was not spawned in this place (doesn't have neighborIds)
-    //     if (neighborIds.length == 0) {
-    //         neighborIds = new int[neighbors.length];
-    //         // iterate over the neighbors and unbox each element ad add them to neighborIds list
-    //         for (int i = 0; i < neighbors.length; i++) {
-    //             neighborIds[i] = (Integer) neighbors[i]; // auto-unboxing from object to int
-    //         }
-    //         // chech if node has 2 neighbors (left and right)
-    //         if (neighbors.length == 2) {
-    //             // spawn agent to search 2nd neighbor 
-    //             NodeArgs nodeArgs = new NodeArgs(searchRange, new int[] { neighborIds[1] }, dimension);
-    //             spawn(1, new Object[] { nodeArgs });
-    //             MASS.getLogger().debug("***** agent(" + getAgentId() + ") was spawnd an agnet at dimension " + dimension + ".");
-    //             // migrate to 1sh neighbor 
-    //             migrate(neighborIds[0]);
-    //             MASS.getLogger().debug("***** agent(" + getAgentId() + ") migrate to: " + neighborIds[0] + ".");
-
-    //         } else { // node has 1 neighbors  mig
-    //             migrate(neighborIds[0]);
-    //             MASS.getLogger().debug("***** agent(" + getAgentId() + ") migrate to: " + neighborIds[0] + ".");
-    //         }
-    //         dimension = dimension == 0 ? 1 : 0;
-    //     } else { // agent was spawned (has neighborIds): migrate to neighborId[0]
-    //         migrate(neighborIds[0]);
-    //         MASS.getLogger().debug("***** agent(" + getAgentId() + ") migrate to: " + neighborIds[0] + ".");
-    //     }
-    //     // reset neighborIds 
-    //     neighborIds = new int[0];
-    //     return null;
-    // }
-
+    
+     /**
+     * conducts a search within the KDTree
+     * determines relevant areas to search based on the node's position and axis of comparison
+     * @return the location of the node if it's within the search range and hasn't been visited
+     */
     public Object searchTree() {
-
+        // get KDNode of the agent
         KDNode node = (KDNode) getPlace();
 
+        // determine the axis of comparison
         int axis = level % k;
-        // determine the relevant areas to search based on the current node's position and the axis of comparison
-        Tuple2D leftTop = (axis == 0) ? new Tuple2D(node.location.getX(), searchRange.getUpperRight().getY()) : new Tuple2D(searchRange.getUpperRight().getX(), node.location.getY());
-        Tuple2D rightBottom = (axis == 0) ? new Tuple2D(node.location.getX(), searchRange.getLowerLeft().getY()) : new Tuple2D(searchRange.getLowerLeft().getX(), node.location.getY());
-        MASS.getLogger().debug( " point : " + node.location.toString());
 
-        // level ++;
+        // calculate leftTop and rightBottom points for dividing the search area
+        Tuple2D leftTop = (axis == 0) ? new Tuple2D(node.location.getX(), searchRange.getUpperRight().getY())
+                : new Tuple2D(searchRange.getUpperRight().getX(), node.location.getY());
+        Tuple2D rightBottom = (axis == 0) ? new Tuple2D(node.location.getX(), searchRange.getLowerLeft().getY())
+                : new Tuple2D(searchRange.getLowerLeft().getX(), node.location.getY());
+
+        // increment tree level for the agent
+        level++;
+
         // create two ranges representing left and right children subspaces for further searching
-        Range leftRange = new Range(searchRange.getLowerLeft() , leftTop);
+        Range leftRange = new Range(searchRange.getLowerLeft(), leftTop);
         Range rightRange = new Range(rightBottom, searchRange.getUpperRight());
 
-        // level ++;
+        // propagate search to child nodes based on intersection with search range
         if (leftRange.intersects(searchRange) && rightRange.intersects(searchRange)) {
             // BothBranch_
             propagateTree(BothBranch_, range);
-        }else{
-        // search the right child if the left range intersects with the query
+        } else {
+            // search the right child if the right range intersects with the query
             if (rightRange.intersects(searchRange)) {
-            // RightBranch_ 
-            propagateTree(RightBranch_,range);
+                // RightBranch_
+                propagateTree(RightBranch_, range);
             }
+            // search the left child if the left range intersects with the query
             if (leftRange.intersects(searchRange)) {
-            // LeftBranch_
-            propagateTree(LeftBranch_, range);
+                // LeftBranch_
+                propagateTree(LeftBranch_, range);
             }
         }
-
+         // check if the current place has not been visited and contains the node's location
         if (!(getPlace().getVisited()) && searchRange.contains(node.location)) {
             getPlace().setVisited(true);
-            MASS.getLogger().debug( "found point : " + node.location.toString());
+            MASS.getLogger().debug("***** found point : " + node.location.toString());
             return node.location;
         }
-        
+        // return null if no point is found
         return null;
     }
-       
 
 }
